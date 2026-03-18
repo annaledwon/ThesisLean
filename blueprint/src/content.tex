@@ -1,7 +1,828 @@
-% In this file you should put the actual content of the blueprint.
-% It will be used both by the web and the print version.
-% It should *not* include the \begin{document}
-%
-% If you want to split the blueprint content into several files then
-% the current file can be a simple sequence of \input. Otherwise It
-% can start with a \section or \chapter for instance.
+\chapter{Geometry}
+
+We will start with a definition that originally comes much later in the book.
+There, space is defined as the set of all points (\cite{SMSGGeometry}, 53).
+Together with the earlier undefined objects points, lines and planes, of which lines and planes were loosely defined as sets of points (\cite{SMSGGeometry}, 15), we conclude that we can build the following geometry based on $\RR^3$.
+
+
+\begin{definition}[Space]\label{def:Space}
+  \lean{structure:Space}
+  \leanok
+    Space, the set of all points, is $\RR^3$. (\cite{SMSGGeometry}, 53)
+\end{definition}
+
+The SMSG further defines all geometric items (including lines and planes) as sets of points (\cite{SMSGGeometry}, 15).
+Hence, we get
+
+\begin{definition}[Sets of Points]\label{def:GeomItems}
+  \lean{structure:Line}
+  \leanok
+  \uses{def:Space}
+    For all geometric items $G$, let $G \subset \RR^3$.
+\end{definition}
+
+%_______________________ Postulate 1 _____________________________________________
+
+\begin{definition}[Postulate 1]\label{def:Postulate_1}
+  \lean{structure:ObjectsWithCoordinate.lineBy, structure:ObjectsWithCoordinate.exists_lineBy, structure:ObjectsWithCoordinate.mem_lineBy_left, structure:ObjectsWithCoordinate.mem_lineBy_right, structure:ObjectsWithCoordinate.unique_lineBy}
+  \leanok
+  \uses{def:GeomItems}
+  Given any two different points, there is exactly one line which contains both of them. (\cite{SMSGGeometry}, 30)
+
+  (For $P,Q \in \RR^3$, $P \ne Q$, exists exactly one line $L \subset \RR^3$ with $P,Q \in L$.
+  For all other lines $L' \subset \RR^3$ with $P,Q \in L'$ we see $L=L'$.)
+\end{definition}
+%__________________________________________________________________________________
+  To designate the line determined by two points $P,Q \in \RR^3$ we use the notation $\geomline{PQ}$.
+
+
+%_________________________ Postulate 2 _________________________________________
+\begin{definition}[Postulate 2 - The Distance Postulate]\label{def:Postulate_2}
+  \lean{structure:Space.dist, structure:Space.dist_self, structure:Space.dist_pos}
+  \leanok
+  \uses{def:GeomItems}
+  To every pair of points there corresponds a unique non-negative number. (\cite{SMSGGeometry}, 34)
+
+  If the points are equal, the number is zero.
+  If the points are different, the number is positive.
+
+  (Existence of function $\operatorname{d}: (\RR^3\times\RR^3) \to \RR_+ \cup \set{0}$.)
+  %TODO, add when zero and when positive
+\end{definition}
+%________________________________________________________________________________
+
+\begin{definition}[Distance]\label{def:Distance}
+  \lean{structure:Space.dist}
+  \leanok
+  \uses{def:Postulate_2}
+  The distance between two points is the positive number given by the Distance Postulate (\ref{def:Postulate_2}).
+  If the points are $P,Q \in \RR^3$, then the distance is denoted by $PQ$.
+  (\cite{SMSGGeometry}, 34)
+
+  ($PQ=d(P,Q)$)
+\end{definition}
+
+%____________________________ Postulate 3 ____________________________________
+
+
+\begin{definition}[Postulate 3 - The Ruler Postulate]\label{def:Postulate_3}
+  \lean{structure:LineWithCoordinate, structure:ObjectsWithCoordinate.line_dist}
+  \leanok
+  \uses{def:GeomItems, def:Postulate_1, def:Distance, def:Postulate_2}
+  The points of a line can be placed in correspondence with the real numbers in such a way that
+  \begin{enumerate}
+    \item to every point of the line there corresponds exactly one real number,
+    \item to every real number there corresponds exactly one point of the line, and
+    \item the distance between two points is the absolute value of the difference of the corresponding numbers.
+  \end{enumerate}
+  (\cite{SMSGGeometry}, 36)
+
+  %TODO
+
+  For line $L \subset \RR^3$, exists bijective function $\operatorname{coord}:L \to \RR$ (covers item 1 and 2).
+
+  Distance between two points $P,Q$ then is $\operatorname{d}=|\operatorname{coord}(P)-\operatorname{coord}(Q)|$.
+  With $|\cdot |$ being the absolute value.
+\end{definition}
+%___________________________________________________________________________________
+
+  This postulate also tells us that there are infinitely many points in a line.
+
+
+\begin{definition}[Coordinate System]\label{def:Coordinate}
+  \lean{sturcture:LineWithCoordinate.coordinate}
+  \leanok
+  \uses{def:Postulate_3}
+  A correspondence of the sort described in the Ruler Postulate (\ref{def:Postulate_3}) is called a coordinate system
+  for the line.
+  The number corresponding to a given point is called the coordinate of the point.
+  (\cite{SMSGGeometry}, 37)
+
+
+\end{definition}
+
+%____________________________________ Postulate 4 _________________________________________
+\begin{definition}[Postulate 4 - The Ruler Placement Postulate]\label{def:Postulate_4}
+  %TODO \lean{}
+  \uses{def:GeomItems, def:Coordinate, def:Postulate_3}
+  Given two points $P$ and $Q$ of a line, the coordinate system can be chosen in such a way that the coordinate of $P$ is zero and the coordinate of $Q$ is positive.
+  (\cite{SMSGGeometry}, 40)
+
+
+  For $L \subset \RR^3$ line and $P,Q \in L$, we can choose a bijective function (as in \ref{def:Postulate_3}) $\operatorname{coord}$ so that $\operatorname{coord}(P)=0$ and $\operatorname{coord}(Q)>0$.
+\end{definition}
+%___________________________________________________________________________________________
+
+\begin{definition}[Betweenness]\label{def:Betweenness}
+  \lean{def:between, structure:Objects}
+  \leanok
+  \uses{def:Postulate_1, def:Postulate_2, def:Distance} %TODO: does it use def:Postulate_3?
+  For three points $A,B,C$, $B$ is between $A$ and $C$ if
+  \begin{enumerate}
+    \item $A,B,C$ are distinct points on the same line, and
+    \item $AB + BC =AC$.
+  \end{enumerate}
+  (\cite{SMSGGeometry}, 41)
+
+  For $A,B,C \in \RR^3$, $B$ is between $A$ and $C$ if (1) $A\ne B\ne C$ and $B \in \geomline{AC}$ and (2) $AB+BC=AC$ ($\operatorname{d}(A,B)+\operatorname{d}(B,C)+\operatorname{d}(A,C)$).
+
+  We will write $A(B)C$ for $B$ is between $A$ and $C$.
+\end{definition}
+
+\begin{theorem}[2-1.]\label{thm:2-1.}
+  \lean{thm:coordinates_between_points_between}
+  \leanok
+  \uses{def:Postulate_1, def:Postulate_3, def:Betweenness, def:Coordinate, def:Distance}
+  Let $A,B,C$ be three points of a line $L$ ($A,B,C \in L$) with coordinates $x,y,z \in \RR$.
+  If $x<y<z$ then $B$ is between $A$ and $C$.
+  (\cite{SMSGGeometry}, 42)
+
+  Let $A,B,C \in \RR^3$ with $B \in \geomline{AC}$, with $\coord{A}=:x, \coord{B}=:y, \coord{C}=:z$. If $x<y<z$, then $B$ is between $A$ and $C$.
+
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Postulate_1, def:Postulate_3, def:Betweenness, def:Coordinate, def:Distance}
+  \leanok
+    \begin{align*}
+      x<y<z &\imp
+                  y-x,z-y,z-x>0 \\
+            &\imp
+                  y-x=\abs{y-x}=AB, z-y=\abs{z-y}=BC, z-x=\abs{z-x}=AC \\
+            &\imp
+                  AB+BX=(y-x)+(z-y)=z-x=AC \MP.
+    \end{align*}
+\end{proof}
+
+\begin{theorem}[2-2.]\label{thm:2-2.}
+  \lean{thm:exists_between}
+  \leanok
+  \uses{def:Postulate_1, def:Postulate_3,def:Betweenness, def:Coordinate, thm:2-1.}
+  Of any three different points on the same line, one is between the other two.
+  (\cite{SMSGGeometry}, 43)
+
+  For $A,B,C \in \RR^3, A\ne B\ne C$ with $B \in \geomline{AC}$: $A(B)C, B(A)C$ or $A(C)B$.
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Postulate_1, def:Postulate_3,def:Betweenness, def:Coordinate, thm:2-1.}
+  \leanok
+  Let $A,B,C \in \RR^3, A\ne B\ne C$ and $B \in \geomline{AC}$.
+  \ref{def:Postulate_3} allows for coordinates, let $\coord{A}=:x, \coord{B}=:y, \coord{C}=:z$.
+  Since $A \ne B \ne C$, we know $x \ne y \ne z$.
+
+  There are now six possibilities
+  \begin{align*}
+    (1)& x<y<z\MP, & (2)& x<z<y\MP, & (3)& y<x<z \MP, \\
+    (4)& y<z<x \MP, & (5)& z<x<y \MP, & (6)& z<y<x \MP.
+  \end{align*}
+  \ref{thm:2-2.} then follows from \ref{thm:2-1.}.
+\end{proof}
+
+\begin{theorem}[2-3.]\label{thm:2-3.}
+  \lean{thm:unique_between}
+  \leanok
+  \uses{def:Postulate_1, def:Distance, def:Betweenness, thm:2-2.}
+  Of three different points on the same line, only one is between the other two.
+  (\cite{SMSGGeometry}, 44)
+
+  Of $A,B,C \in \RR^3, A \ne B \ne C$ with $B \in \geomline{AC}$ either $A(B)C, A(C)B$, or $B(A)C$.
+\end{theorem}
+\textit{Restatement:} If $A,B$ and $C$ are three different points on the same line, and $B$ is between $A$ and $C$, than $A$ is not between $B$ and $C$, and $C$ is not between $A$ and $B$.
+
+\begin{proof}
+  \uses{def:Postulate_1, def:Distance, def:Betweenness}
+  \leanok
+  If $A(B)C$, then $AB+BC=AC$ (1), if additionally $B(A)C$, then $BA+AC=AB+AC=BC$.
+
+  ((1) $\imp AC-BC=AB$ and (2) $\imp AC-BC=-AB$)
+
+  $\imp AB=AC-BC=-AB$.
+
+  Since $AB\ne-AB$ only one of them can be between the other two.
+  The other cases follow accordingly.
+\end{proof}
+
+
+\begin{definition}[Segment]\label{def:Segment}
+  \uses{def:Betweenness}
+  For any two points $A$ and $B$ the segment $\segment{AB}$ is the set whose points are $a$ and $B$, together with all points that are between $A$ and $B$.
+  The points $A$ and $B$ are called the end-points of $\segment{AB}$.
+  (\cite{SMSGGeometry},45)
+
+  For $A,B \in \RR^3: \segment{AB}:=\set{A,B}\cup \set{C\mid A(C)B}$.
+\end{definition}
+
+\begin{definition}[Segment Lenth]\label{def:Segment_Lenth}
+  \uses{def:Distance, def:Segment}
+    The distance $AB$ is called the lenth of the segment $\segment{AB}$.
+    (\cite{SMSGGeometry}, 45)
+
+    %TODO restatement necessary?
+\end{definition}
+
+\begin{definition}[Ray]\label{def:Ray}
+  \uses{def:Postulate_1, def:Segment, def:Betweenness} %TODO does it use thm:2-3.?
+  Let $A$ and $B$ be points of a line $L$.
+  The ray $\ray{AB}$ is the set which is the union of (1) $\segment{AB}$ and (2) the set of all points $C$ with $B$ is in between $A$ and $C$.
+  $A$ is called the end-point of $\ray{AB}$.
+  (\cite{SMSGGeometry}, 46)
+
+  Let $L \subset \RR^3$ and $A,B \in L$: $\ray{AB}:=\segment{AB}\cup \set{C\mid A(B)C}$.
+\end{definition}
+
+\begin{definition}[Opposite Rays]\label{def:Oppo_Rays}
+  \uses{def:Ray, def:Betweenness}
+  If $A$ is in between $B$ and $C$, then $\ray{AB}$ and $\ray{AC}$ are called opposite rays.
+  (\cite{SMSGGeometry}, 46)
+
+  %TODO restatement necessary? if so how? maybe \ray{AB}\setminus\set{A}\cup \ray{AC}\setminus\set{A}=\emptyset ?
+\end{definition}
+
+\begin{theorem}[2-4. - The Point Plotting Theorem]\label{thm:2-4.}
+  \uses{def:Distance, def:Postulate_3, def:Postulate_4, def:Ray}
+  Let $\ray{AB}$ be a ray and let $x$ be a positive number.
+  Then there is exactly one point $P$ of $\ray{AB}$ such that $AP=x$.
+  (\cite{SMSGGeometry}, 46)
+
+  Let $\ray{AB} \subset \RR^3$ and $x \in \RR_+$ then exists exactly one $P \in \ray{AB}$ with $AP=x$.
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Distance, def:Postulate_3, def:Postulate_4, def:Ray}
+  By \ref{def:Postulate_4} we can choose coordinate system (bijective function) on $\geomline{AB}$ such that $\coord{A}=0$ and $\coord{B}=:r>0$.
+  Let $P$ be the point with $\coord{P}=x$ then $ P \in \geomline{AB}$ and $AP=\abs{x-0}=\abs{x}=x$.
+  Since $\coord{}$ bijective (\ref{def:Postulate_3}) follows for all $P' \in \ray{AB}$ with $\coord{P'}=x$ that $P=P'$.
+\end{proof}
+
+\begin{definition}[Mid-Point]\label{def:Mid-Point}
+  \uses{def:Distance, def:Betweenness, def:Segment}
+  A point $B$ is called mid-point of a segment $\segment{AC}$, if $B$ is between $A$ and $C$ and $AB=BC$.
+  (\cite{SMSGGeometry}, 47)
+
+  $B \in \RR^3$ is mid-point of $\segment{AC} \subset \RR^3$ if $A(B)C$ and $AB=BC$.
+\end{definition}
+
+\begin{theorem}[2-5.]\label{thm:2-5.}
+  \uses{def:Betweenness, def:Segment, thm:2-4., def:Mid-Point}
+  Every segment has exactly one mid-point.
+  (\cite{SMSGGeometry}, 47)
+
+  For every segment $\segment{AC} \subset \RR^3$ exists exatly one $B\in \RR^3$ with $A(B)C$ and $AB=BC$.
+\end{theorem}
+\begin{proof}
+  \uses{def:Betweenness, def:Segment, thm:2-4., def:Mid-Point, def:Ray}
+  On $\segment{AC} \subset \RR^3$ choose $B \in \segment{AC}$ so that $AB=BC$ (\ref{thm:2-4.}) (1).
+  By definition of segment (\ref{def:Segment}) we know $A(B)C$, hence $AB+BC=AC$ (2).
+  From (1) and (2) we conclude $2AB=AC$ or $AB=\frac{1}{2}AC$.
+  Since $B \in \segment{AC}$ if follows that $B \in \ray{AC}$ and \ref{thm:2-4.} says there is only exactly one such point.
+
+  %TODO proof feels wonky
+\end{proof}
+
+\begin{definition}[Bisection]\label{def:Bisection}
+  \uses{def:Segment, def:Mid-Point, thm:2-5.}
+  The mid-point of a segment is said to bisect the segment.
+  Any figure whose intersection with a segment is the mid-point is said to bisect the segment.
+  (\cite{SMSGGeometry}, 47)
+\end{definition}
+
+\begin{definition}[Collinear]\label{def:Collinear}
+  \uses{def:GeomItems}
+  A set of points is collinear if there is a line which contains all the points of the set.
+  (\cite{SMSGGeometry}, 54)
+
+  %TODO restatement necessary?
+\end{definition}
+
+\begin{definition}[Coplanar]\label{def:Coplanar}
+  \uses{def:GeomItems}
+  A set of points is coplanar if there is a plane which contains all the points of the set.
+  (\cite{SMSGGeometry}, 54)
+
+  %TODO restatement necessary?
+\end{definition}
+
+%______________________________________ Postulate 5 _______________________________________________________
+\begin{definition}[Postulate 5]\label{def:Postulate_5}
+  \uses{def:Collinear, def:Coplanar} %TODO restatement also uses Postulate 1
+  \begin{itemize}
+    \item Every plane contains at least three non-collinear points.
+    \item Space contains at least four non-coplanar points.
+  \end{itemize}
+  (\cite{SMSGGeometry}, 54)
+
+  Let $E \subset \RR^3$ be a plane then exist $A, B, C \in E$ with $A \not\in \geomline{BC}$.
+
+  There are $A,B,C,D \in \RR^3$ with $A,B,C \in M$ so that $A \not\in \geomline{BC}$ and $D \not\in M$.
+\end{definition}
+%________________________________________________________________________________________________________
+
+\begin{theorem}[3-1.]\label{thm:3-1.}
+  \uses{def:Postulate_1}
+  Two different lines intersect in at most one point.
+  (\cite{SMSGGeometry}, 55)
+
+  For lines $L_1,L_2 \subset \RR^3$ with $L_1 \ne L_2: \#(L_1\cap L_2)\leq 1$.
+\end{theorem}
+\begin{proof}
+  \uses{def:Postulate_1}
+  Let $L_1,L_2 \subset \RR^3$ with $L_1\ne L_2$, and further $\#(L_1\cap L_2)>1$.
+  Then exist $P,Q \in L_1\cap L_2$.
+  Then $P,Q \in L_1$ and $P,Q \in L_2$.
+  Thus, $L_1=\geomline{PQ}=L_2$.
+\end{proof}
+
+%____________________________________________ Postulate 6 _____________________________________________
+\begin{definition}[Postulate 6]\label{def:Postulate_6}
+  \uses{def:Postulate_1}
+  If two points lie in the same plane, then the line containing these points lies in the same plane.
+  Let $E \subset \RR^3$ be a plane. If $A,B \in E$, then $\geomline{AB} \subset E$
+  (\cite{SMSGGeometry}, 56)
+\end{definition}
+%______________________________________________________________________________________________________
+
+\begin{theorem}[3-2.]\label{3-2.}
+    \uses{def:Postulate_1, def:Postulate_6}
+    If a line intersects a plane not containing it then the intersection is a point.
+    (\cite{SMSGGeometry}, 56)
+
+    Let $L \subset \RR^3$ be a line and $E \subset \RR^3$ be a plane.
+    If $L \not\subset E$ and $\#(L\cap E)>0$ then $\#(L\cap E)=1$.
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Postulate_1, def:Postulate_6}
+  Assume $\#(L\cap E)>1$, then exist points $A,B \in L\cap E$.
+  Then according to \ref{def:Postulate_6} $L=\geomline{AB}\subset E$.
+\end{proof}
+
+%_________________________________ Postulate 7 ______________________________________________________
+\begin{definition}[Postulate 7]\label{def:Postulate_7}
+  \uses{def:Postulate_1, def:Collinear, def:Coplanar}
+  Any three points lie in at least one plane, and any three non-collinear points liein exactly one plane.
+  More briefly, any three points are coplanar and any three non-collinear points determine a plane.
+  (\cite{SMSGGeometry}, 57)
+
+  For $A,B,C \in \RR^3$ exists a plane $E \subset \RR^3$ with $A,B,C \in E$.
+  For $A,B,C \in \RR^3$ with $A \not\in \geomline{BC}$ exists exactly one plane $E \subset \RR^3$ with $A,B,C \in E$.
+\end{definition}
+%____________________________________________________________________________________________________
+
+\begin{theorem}[3-3.]\label{thm:3-3.}
+  \uses{def:Postulate_1, def:Postulate_3, def:Collinear, def:Postulate_7}
+  Given a line and a point not on the line, there is exactly one plane containing both of them.
+  (\cite{SMSGGeometry}, 57)
+
+  Given line $L \subset \RR^3$ and Point $P\in \RR^3$ with $P \not\in L$, there is exactly one Plane $E \subset \RR^3$ with $P \in E$ and $L \subset E$.
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Postulate_1, def:Postulate_3, def:Collinear, def:Postulate_7, def:Postulate_6}
+  There exist $A,B \in L$ with $A\ne B$ (\ref{def:Postulate_3}) and $L=\geomline{AB}$.
+  Since $P \not\in \geomline{AB}$ we know $A,B,C$ are non-collinear.
+  From Postulate 7 (\ref{def:Postulate_7}) follows that there is exactly one plane containing the three points.
+  From Postulate and (\ref{def:Postulate_6}) follows the line is also contained in that plane.
+
+  %TODO proof seems hella wonky
+\end{proof}
+
+\begin{theorem}[3-4.]\label{thm:3-4.}
+  \uses{def:Postulate_3, thm:3-1., def:Postulate_6, thm:3-3.}
+  Given two intersecting lines, there is exactly one plane containing them.
+  (\cite{SMSGGeometry}, 58)
+
+  Let $L_1, L_2\subset \RR^3$ be two lines with $\#(L_1\cap L_2)=1$, then there is exactly one plane $E\subset \RR^3$ with $L_1,L_2 \subset E$.
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Postulate_3, thm:3-1., def:Postulate_6, thm:3-3., def:Collinear}
+  Let $P \in L_1\cap L_2$ be the intersection.
+  Py Postulate 3 (\ref{def:Postulate_3}) exists $Q \in L_1$ with $P \ne Q$.
+  According to \ref{thm:3-1.} $Q \not\in L_2$.
+  According to \ref{thm:3-3.} there is exactly one plane $E \subset \RR^3$ with $L_2 \subset E$ and $Q \in E$.
+  By Postulate 6 (\ref{def:Postulate_6}), since $P,Q \in E$ follows $L_1=\geomline{PQ} \subset E$.
+  Since $L_1, L_2$ define three non-collinear points $E$ is unique according to Postulate 7 (\ref{def:Postulate_7}).
+\end{proof}
+
+%_________________________________________ Postulate 8 _____________________________________________________________________
+\begin{definition}[Postulate 8]\label{def:Postulate_8}
+  \uses{def:GeomItems}
+  If two different planes intersect then their intersection is a line.
+  (\cite{SMSGGeometry}, 58)
+
+  %TODO restatement possibly think about introducing dimensions?
+\end{definition}
+%________________________________________________________________________________________________________________________
+
+\begin{definition}[Convex Sets]\label{def:Convex_Sets}
+  \uses{def:Segment}
+  A set $M \subset \RR^3$ is called convex if for every two points $P,Q \in A$ the entire segment $\segment{PQ}$ is in $M$.
+  (\cite{SMSGGeometry}, 62)
+
+  $M\subset \RR^3$ convex if $P,Q \in M \imp \segment{PQ}\subset A$.
+\end{definition}
+
+
+%_______________________________________________ Postulate 9 ______________________________________________________________
+\begin{definition}[Postulate 9 - The Plane Separation Postulate]\label{def:Postulate_9}
+  \uses{def:Segment, def:Postulate_6, def:Convex_Sets}
+  Given a line and a plane containing it.
+  The points of the plane that do not lie on the line form two sets such that
+  \begin{itemize}
+    \item each of the sets is convex and
+    \item if $P$ is in one set and $Q$ in the other then $\segment{PQ}$ intersects the line.
+  \end{itemize}
+  (\cite{SMSGGeometry}, 64)
+
+  Given line $L\subset\RR^3$ and plane $E\subset \RR^3$ with $L \subset E$.
+  There exist two sets $M,N \subset\RR^3$ such that
+  \begin{itemize}
+    \item $M,N$ are convex and
+    \item $P \in M \land Q \in N \imp \segment{PQ}\cap L \ne \emptyset$.
+  \end{itemize}
+
+  %TODO sets disjunkt?
+\end{definition}
+%___________________________________________________________________________________________________________________________
+
+\begin{definition}[Half-Planes]\label{def:Half-Planes}
+  \uses{def:Postulate_9}
+  Given a line $L$ and a plane $E$ containing it, the two sets determined by Postulate 9 (\ref{def:Postulate_9}) are called half-planes, and $L$ is called an edge of each of them.
+  We say that $L$ separates $E$ into the two half-planes.
+  If two points lie in the same half plane, they are on the same side. Analogous: on opposite sides.
+  (\cite{SMSGGeometry}, 64)
+
+  Given a plane $E \subset \RR^3$ and two points $P,Q \in E$ and a line $L \in E$ we write
+  $P\sim_L Q$ if $P$ and $Q$ are on the same side of $L$ and
+  $P\not\sim_L Q$ if $P$ and $Q$ are on opposite sides of $L$.
+  %TODO restatement?
+\end{definition}
+
+%_____________________________________ Postulate 10 _______________________________________________________________________
+\begin{definition}[Postulate 10 - The Space Separation Postulate]\label{def:Postulate_10}
+  \uses{def:GeomItems, def:Segment, def:Convex_Sets}
+  The points of space that do not lie in a given plane form two sets such that
+  \begin{itemize}
+    \item each of the sets is convex and
+    \item if a point $P$ is in one set and $Q$ in the other then $\segment{PQ}$ intersects the plane.
+  \end{itemize}
+  (\cite{SMSGGeometry}, 66)
+
+  Given a plane $E \subset \RR^3$, there exist two sets $M,N \subset \RR^3$ such that
+  \begin{itemize}
+    \item $M,N$ are convex and
+    \item $P\in M \land Q\in N \imp \segment{PQ}\cap E \ne \emptyset$.
+  \end{itemize}
+\end{definition}
+%___________________________________________________________________________________________________________
+
+\begin{definition}[Half-Spaces]\label{def:Half-Spaces}
+  \uses{def:Postulate_10}
+  The two sets determined by Postulate 10 (\ref{def:Postulate_10}) are called half-spaces, and the given plane is called the face of each of them.
+  (\cite{SMSGGeometry}, 66)
+  %TODO restatement?
+\end{definition}
+
+\begin{definition}[Angle]\label{def:Angle}
+  \uses{def:Ray}
+  An angle is the union of two rays (\ref{def:Ray}) which have the same end-point but do not lie in the same line.
+  The two rays are called the sides of the angle and their common end-point is calles the vertex.
+  (\cite{SMSGGeometry}, 71)
+
+  For $\ray{AB}, \ray{AC} \subset \RR^3$ we define $\angle BAC:= \ray{AB} \cup \ray{AC}$.
+\end{definition}
+
+\begin{definition}[Triangle]\label{def:Triangle}
+  \uses{def:Segment, def:Angle, def:Collinear}
+  If $A,B,C$ are three non-collinear (\ref{def:Collinear}) points, then the union of the segments (\ref{def:Segment})
+  $\segment{AB}, \segment{BC}, \segment{AC}$ is called a triangle, and is denoted $\geomtriang{ABC}$.
+  The points $A,B,C$ are called its vertices, the segments its sides.
+  $\angle ABC, \angle BAC, \angle ACB$ are called the angles of $\geomtriang{ABC}$.
+  (\cite{SMSGGeometry}, 72)
+
+  For $A,B,C \in \RR$ we define $\geomtriang{ABC}:=\segment{AB}\cup \segment{BC}\cup\segment{AC}$.
+\end{definition}
+
+\begin{definition}[Angle Interior]\label{def:Angle_Interior}
+  \uses{def:Postulate_9, def:Half-Planes, def:Angle}
+  Let $\angle BAC$ be an angle lying in a plane $E$.
+  A point $P$ of $E$ lies in the interior of $\angle{BAC}$ if
+  (1) $P$ and $B$ are on the same side of $\geomline{AC}$ and
+  (2) $P$ and $C$ are on the same side of $\geomline{AB}$.
+  The exterior of $\angle{BAC}$ is the set of all points that do not lie in the interior and do not lie on the angle itself.
+  (\cite{SMSGGeometry}, 73)
+
+  For $\angle{BAC} \subset $E$ \subset \RR^3$, with $E$ plane, we define
+  \[
+  \interior{\angle{BAC}}:=\set{P\mid P \in E \land P \sim_{\geomline{AC}} B \land P \sim_{\geomline{AB}} C}
+  \]
+  and
+  \[
+  \exterior{\angle{BAC}}:=E\setminus\left(\interior{\angle{BAC}}\cup \angle{BAC}\right) \MP.
+  \]
+\end{definition}
+
+\begin{definition}[Triangle Interior]\label{def:Tiangle_Interior}
+  \uses{def:Postulate_9, def:Half-Planes, def:Angle, def:Triangle, def:Angle_Interior}
+  A point lies in the Interior of a triangle, if it lies in the interior of each of the angles of the triangle.
+  A point lies in the exterior of the triangle if it lies in the plane of the triangle but is not a point of the triangle or its interior.
+  (\cite{SMSGGeometry}, 74)
+
+  Let $E \subset \RR^3$ be a plane and $\geomtriang{ABC}\subset E$ be a triangle.
+  We define
+  \[
+  \interior{\geomtriang{ABC}}:=\interior{\angle{ABC}}\cap \interior{\angle{BAC}}\cap \interior{\angle{ACB}}
+  \]
+  and
+  \[
+  \exterior{\geomtriang{ABC}}:=E\setminus\left(\interior{\geomtriang{ABC}}\cup \geomtriang{ABC}\right)\MP.
+  \]
+\end{definition}
+
+%_____________________________________________________ Postulate 11 __________________________________________________________________________
+\begin{definition}[Postulate 11 - The Angle Measurement Postulate]\label{def:Postulate_11}
+  \uses{def:Angle}
+  To every angle $\angle{BAC}$ there corresponds a real number between 0 and 180.
+  (\cite{SMSGGeometry}, 80)
+
+  Let $\operatorname{ANG}\subset \RR^3$ be the set of all angles.
+  There exists a function $\operatorname{m}:\operatorname{ANG}\to (0,180)$.
+\end{definition}
+%___________________________________________________________________________________________________________________________________________
+
+\begin{definition}[Angle Measure]\label{def:Angle_Measure}
+  \uses{def:Angle, def:Postulate_11}
+  The number specified by Postulate 11 (\ref{def:Postulate_11}) is called the measure of the angle and written as $\measuredangle{ABC}$.
+  (\cite{SMSGGeometry}, 80)
+
+  For an angle $\angle{ABC} \subset \RR^3$ we define $\measuredangle{ABC}:=\operatorname{m}(\angle{ABC})$.
+\end{definition}
+
+%_____________________________________________________ Postulate 12 _______________________________________________________________________
+\begin{definition}[Postulate 12 - The Angle Construction Postulate]\label{def:Postulate_12}
+  \uses{def:Ray, def:Half-Planes, def:Angle_Measure}
+  Let $\ray{AB}$ be a ray on the edge of the half-plane $H$.
+  For every number $r$ between 0 and 180 there is exactly one ray $\ray{AP}$ with $P$ in $H$ such that $\measuredangle{PAB}=r$.
+  (\cite{SMSGGeometry}, 81)
+
+  Let $E \subset \RR^3$ be a plane, $\ray{AB}\in E$ be a ray and $Q,R \in E$ with $Q\not\sim_{\geomline{AB}}R$.
+  For every $r \in (0,180)$ exists exactly one $P \in E$ with $P\sim_{\geomline{AB}}Q$ such that $\measuredangle{PAB}=r$.
+\end{definition}
+%_________________________________________________________________________________________________________________________________________
+
+
+
+%_____________________________________________________ Postulate 13 _______________________________________________________________________
+\begin{definition}[Postulate 13 - The Angle Addition Postulate]\label{def:Postulate_13}
+  \uses{def:Angle, def:Angle_Interior, def:Angle_Measure}
+  If $D$ is a point in the interior of $\angle{BAC}$, then
+  \[
+  \measuredangle{BAC}=\measuredangle{BAD}+\measuredangle{DAC}\MP.
+  \]
+  (\cite{SMSGGeometry}, 81)
+
+  Let $\angle{BAC}\subset\RR^3$ be an angle.
+  If $D \in \interior{\angle{BAC}}$ then $\measuredangle{BAC}=\measuredangle{BAD}+\measuredangle{DAC}$.
+\end{definition}
+%_________________________________________________________________________________________________________________________________________
+
+\begin{definition}[Linear Pair]\label{def:Linear_Pair}
+  \uses{def:Ray, def:Angle, def:Oppo_Rays}
+  If $\ray{AB}$ and $\ray{AC}$ are opposite rays, and $\ray{AD}$ is another ray, than $\angle{BAD}$ and $\angle{DAC}$ form a linear pair.
+  (\cite{SMSGGeometry}, 82)
+
+  %TODO restatement
+\end{definition}
+
+\begin{definition}[Supplementary]\label{def:Supplementary}
+  \uses{def:Angle_Measure, def:Angle}
+  If the sum of the measure of two angles is 180 then the angles are called supplementary, and each is called supplement of the other.
+  (\cite{SMSGGeometry}, 82)
+
+  Let $\angle BAC, \angle EDF \subset \RR^3$ be angles. We define
+  \[
+  \supp{\angle BAC}{\angle DEF}:\eqv \measuredangle BAC + \measuredangle DEF=180\MP.
+  \]
+\end{definition}
+
+
+%_____________________________________________________ Postulate 14 _______________________________________________________________________
+\begin{definition}[Postulate 14 - The Supplement Postulate]\label{def:Postulate_14}
+  \uses{def:Angle, def:Linear_Pair, def:Supplementary}
+  If two angles form a linear pair, then they are supplementary.
+  (\cite{SMSGGeometry}, 82)
+
+  %TODO restatement
+\end{definition}
+%____________________________________________________________________________________________________________________________________________
+
+\begin{definition}[Right Angle]\label{def:Right_Angle}
+  \uses{def:Angle, def:Angle_Measure, def:Linear_Pair, def:Postulate_14}
+  If the two angles of a linear pair have the same measure, then each of the angles is a right angle.
+  By Postulate 14 (\ref{def:Postulate_14}) follows that a right angle is an angle $\angle A$ with $\measuredangle A=90$.
+  (\cite{SMSGGeometry}, 85)
+
+  %TODO symbol for right angle?
+\end{definition}
+
+\begin{definition}[Perpendicular]\label{def:Perpendicular}
+  \uses{def:Right_Angle} %TODO also segment, ray definition? line that contains segment or ray depends on Postulate 1?
+  Two intersecting sets, each of which is either a line, a ray or a segment, are perpendicular if the two lines which contain them determine a right angle.
+  (\cite{SMSGGeometry}, 86)
+
+  %TODO restatement... how to denote one dimensional subsets?
+  We write $\perp$.
+
+\end{definition}
+
+\begin{definition}[Complementary]\label{def:Complementary}
+  \uses{def:Angle_Measure}
+  If the sum of the measures of two angles is 90, then the angles are called complementary, and each of them is the complement of the other.
+  (\cite{SMSGGeometry}, 86)
+  Let $\angle BAC, \angle EDF \subset \RR^3$ be angles. We define
+  \[
+  \comp{\angle BAC}{\angle DEF}:\eqv \measuredangle BAC + \measuredangle DEF=90\MP.
+  \]
+
+\end{definition}
+
+\begin{definition}[Acute-Obtuse]\label{def:Acute_Obtuse}
+  \uses{def:Angle_Measure}
+  An angle with measure less than 90 is called acute.
+  An angle with measure greater than 90 is called obtuse.
+  (\cite{SMSGGeometry}, 86)
+
+  %TODO restatement necessary?
+\end{definition}
+
+\begin{definition}[Congruent Angles]\label{def:Congruent_Angles}
+  \uses{def:Angle_Measure}
+  Angles with the same measure are called congruent.
+  (\cite{SMSGGeometry}, 86)
+
+  For two angles $\angle BAC, \angle EDF$ let
+  \[
+  \angle BAC \cong \angle EDF :\eqv \measuredangle BAC = \measuredangle EDF\MP.
+  \]
+
+\end{definition}
+
+\begin{theorem}[4-1.]\label{thm:4-1.}
+  \uses{def:Angle, def:Angle_Measure, def:Complementary, def:Acute_Obtuse}
+  If two angles are complementary, then both of them are acute.
+  (\cite{SMSGGeometry}, 87)
+
+  For $\angle BAC, \angle EDF \subset \RR^3: \comp{\angle ABC}{\angle EDF} \imp \measuredangle BAC, \measuredangle EDF <90$.
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Angle, def:Angle_Measure, def:Complementary, def:Acute_Obtuse}
+  Let $\angle BAC, \angle EDF \subset \RR^3$ with $ \comp{\angle ABC}{\angle EDF}$:
+  \begin{align*}
+    \comp{\angle ABC}{\angle EDF}
+        &\impu{\text{\ref{def:Complementary}}} \measuredangle BAC+\measuredangle EDF = 90 \\
+        &\imp \measuredangle BAC=90-\measuredangle EDF \land \measuredangle EDF=90-\measuredangle BAC \\
+        &\impu{\text{\ref{def:Postulate_11}}} \measuredangle BAC <90 \land \measuredangle EDF < 90 \\
+        &\impu{\text{\ref{def:Acute_Obtuse}}} \angle BAC, \angle EDF \text{ acute.}
+  \end{align*}
+  %TODO make sure ref works in align environment
+\end{proof}
+
+\begin{theorem}[4-2.]\label{thm:4-2.}
+  \uses{def:Angle, def:Postulate_11, def:Congruent_Angles}
+  Every angle is congruent to itself.
+  (\cite{SMSGGeometry}, 87)
+
+  For all $\angle BAC \subset \RR^3: \angle BAC \cong \angle BAC$.
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Angle, def:Postulate_11, def:Congruent_Angles}
+  Postulate 11 (\ref{def:Postulate_11}) defines function $\operatorname{m}$, meaning $\operatorname{m}(\angle BAC)=\measuredangle BAC$ is unique.
+  Hence $\measuredangle BAC = \measuredangle BAC \imp \angle BAC \cong \angle BAC$.
+  %TODO proof seems wonky
+\end{proof}
+
+\begin{theorem}[4-3.]\label{thm:4-3.}
+  \uses{def:Angle_Measure, def:Right_Angle, def:Congruent_Angles}
+  Any two right angles are congruent.
+  (\cite{SMSGGeometry}, 87)
+
+  For any angles $\angle A, \angle B \subset \RR^3$ with $\measuredangle A=\measuredangle B=90$ follows $\angle A \cong \angle B$.
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Angle_Measure, def:Right_Angle, def:Congruent_Angles}
+  Let $\angle A, \angle B \subset \RR^3$ be angles with $\measuredangle A=\measuredangle B = 90$.
+  From $\measuredangle A = \measuredangle B$ follows from (\ref{def:Congruent_Angles}) that $\angle A \cong \angle B$.
+\end{proof}
+
+\begin{theorem}[4-4.]\label{thm:4-4.}
+  \uses{def:Angle, def:Angle_Measure, def:Supplementary, def:Congruent_Angles, def:Right_Angle}
+  If two angles are congruent and supplementary, then each of them is a right angle.
+  (\cite{SMSGGeometry}, 87)
+
+  Let $\angle A, \angle B\subset \RR^3$ be angles.
+  If $\angle A \cong \angle B \land \supp{\angle A}{\angle B}$ then $\angle A= \angle B =90$.
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Angle, def:Angle_Measure, def:Supplementary, def:Congruent_Angles, def:Right_Angle}
+  \begin{align}
+    \angle A \cong \angle B
+        &\imp \measuredangle A = \measuredangle B =:r \MP, \label{4-4.1}\\
+    \supp{\angle A}{\angle B}
+        &\imp \measuredangle A + \measuredangle B = 180 \MP, \label{4-4.2}\\
+    \ref{4-4.1},\ref{4-4.2}
+        &\imp \measuredangle A + \measuredangle B = 2r =180 \\
+        &\imp \measuredangle A + \measuredangle B = r=90 \MP. \\
+      \end{align}
+  %TODO sort out label and ref, it's not working
+\end{proof}
+
+\begin{theorem}[4-5.]\label{thm:4-5.}
+  \uses{def:Angle_Measure, def:Supplementary, def:Congruent_Angles}
+  Supplements of congruent angles are congruent.
+  (\cite{SMSGGeometry}, 87)
+
+  Let $\angle A,\angle B, \angle C \subset \RR^3$ be angles.
+  If $\angle B \cong \angle C, \supp{\angle A}{\angle B}$ and $\supp{\angle C}{\angle D}$ then $\angle A \cong \angle C$.
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Angle_Measure, def:Supplementary, def:Congruent_Angles}
+  \begin{align*}
+    \angle B \cong \angle D &\imp \measuredangle B=\measuredangle D =:r\MP,\\
+    \supp{\angle A}{\angle B}&\imp \measuredangle A=180-\measuredangle B= 180 -r \MP,\\
+    \supp{\angle C}{\angle D} &\imp \measuredangle C = 180 -\measuredangle D=180-r \MP,\\
+    \measuredangle A=\measuredangle C=180-r &\imp \angle A\cong \angle C\MP.
+  \end{align*}
+\end{proof}
+
+\begin{theorem}[4-6.]\label{thm:4-6.}
+  \uses{def:Angle_Measure, def:Complementary, def:Congruent_Angles}
+  Complements of congruent angles are congruent.
+  (\cite{SMSGGeometry}, 88)
+
+  Let $\angle A,\angle B, \angle C \subset \RR^3$ be angles.
+  If $\angle B \cong \angle C, \comp{\angle A}{\angle B}$ and $\comp{\angle C}{\angle D}$ then $\angle A \cong \angle C$.
+\end{theorem}
+
+\begin{proof}
+  Analogous to proof for \ref{thm:4-5.}.
+\end{proof}
+
+\begin{definition}[Vertical Angles]\label{def:Vertical_Angles}
+  \uses{def:Angle, def:Oppo_Rays}
+  Two angles are vertical angles, if their sides form two pairs of opposite rays.
+  (\cite{SMSGGeometry}, 88)
+
+  Write $\vertAng{\angle A}{\angle B}$.
+
+  %TODO restatement... might rely on restatement of Oppo_Rays, might have to find symbol for opposite rays to make things easier
+\end{definition}
+
+\begin{theorem}[4-7.]\label{thm:4-7.}
+  \uses{def:Oppo_Rays, def:Angle, def:Supplementary, def:Postulate_14, def:Linear_Pair, def:Congruent_Angles}
+  Vertical Angles are congruent.
+  (\cite{SMSGGeometry}, 88)
+
+  For angles $\angle A,\angle B \subset \RR^3$ with $\vertAng{\angle A}{\angle B}$ follows $\angle A \cong \angle B$.
+\end{theorem}
+
+\begin{proof}
+  \uses{def:Oppo_Rays, def:Angle, def:Supplementary, def:Postulate_14, def:Linear_Pair, def:Congruent_Angles}
+  %TODO write proof
+\end{proof}
+
+\begin{theorem}[4-8.]\label{thm:4-8.}
+  \uses{def:Postulate_3, def:Oppo_Rays, def:Angle_Measure, def:Linear_Pair, def:Supplementary, def:Postulate_14, def:Right_Angle, def:Vertical_Angles, thm:4-7.} %TODO uses def:Postulate_13?
+  If two intersecting lines form one right angle, then they form four right angles.
+  %TODO restatement
+\end{theorem}
+
+\begin{proof}
+  %TODO
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Bibliography}
+	\bibliographystyle{plain}
+	\begin{thebibliography}{1}
+
+	\bibitem{SMSGGeometry}
+    School Mathematics Study Group, \textit{Geometry: Unit 13 -- Student's Text, Part I}, 1961
+
+
+	\end{thebibliography}
