@@ -1,0 +1,10 @@
+name = "ThesisLean"
+version = "0.1.0"
+defaultTargets = ["thesislean"]
+
+[[lean_lib]]
+name = "ThesisLean"
+
+[[lean_exe]]
+name = "thesislean"
+root = "Main"
